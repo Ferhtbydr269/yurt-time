@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yurttime Nisan Çalışma Takvimi 2025–2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#f5f4f0;padding:2rem;min-height:100vh}
+h1{font-size:18px;font-weight:500;color:#1a1a18;margin-bottom:4px}
+.subtitle{font-size:13px;color:#73726c;margin-bottom:1.5rem}
+.card{background:#fff;border-radius:12px;border:0.5px solid #d3d1c7;overflow:hidden}
+.card-header{padding:1rem 1.25rem;border-bottom:0.5px solid #d3d1c7;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.card-title{font-size:15px;font-weight:500;color:#1a1a18}
+.card-sub{font-size:13px;color:#73726c}
+.legend{display:flex;gap:8px;flex-wrap:wrap;padding:0.5rem 1.25rem 0.75rem;border-bottom:0.5px solid #d3d1c7}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#73726c}
+.filters{display:flex;gap:8px;flex-wrap:wrap;padding:0.75rem 1.25rem;border-bottom:0.5px solid #d3d1c7}
+.filter-btn{font-size:12px;padding:4px 10px;border-radius:20px;border:0.5px solid #b4b2a9;background:transparent;color:#73726c;cursor:pointer;transition:all .15s}
+.filter-btn.active{background:#e6f1fb;color:#0c447c;border-color:#378add}
+.search{font-size:13px;padding:5px 10px;border-radius:8px;border:0.5px solid #b4b2a9;background:#f1efe8;color:#1a1a18;width:200px;outline:none}
+.search:focus{border-color:#888780;background:#fff}
+.table-wrap{overflow-x:auto;padding-bottom:1rem}
+table{width:100%;border-collapse:collapse;min-width:660px}
+thead tr{border-bottom:0.5px solid #d3d1c7}
+th{font-size:12px;font-weight:500;color:#73726c;padding:8px 10px;text-align:left;white-space:nowrap}
+td{padding:7px 10px;font-size:12px;color:#1a1a18;border-bottom:0.5px solid #e8e6e0;vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#f8f7f4}
+.name{font-weight:500;font-size:13px;white-space:nowrap}
+.cell{display:flex;flex-direction:column;gap:2px}
+.pill{display:inline-block;padding:2px 7px;border-radius:20px;font-size:11px;white-space:nowrap;line-height:1.4}
+.p-guv{background:#E6F1FB;color:#0C447C}
+.p-kat{background:#EAF3DE;color:#27500A}
+.p-spor{background:#EEEDFE;color:#3C3489}
+.p-gof{background:#FAEEDA;color:#633806}
+.p-egit{background:#FAECE7;color:#993C1D}
+.p-nev{background:#FBEAF0;color:#721F1F}
+.p-ois{background:#E1F5EE;color:#085041}
+.hour{font-size:10px;color:#888780;margin-bottom:1px}
+.empty{color:#d3d1c7;font-size:11px}
+@media(max-width:600px){body{padding:1rem}.filters{gap:6px}}
+@media(prefers-color-scheme:dark){
+  body{background:#1a1a18}
+  .card{background:#2c2c2a;border-color:#444441}
+  .card-header,.legend,.filters{border-color:#444441}
+  .card-title{color:#e8e6e0}
+  .card-sub,.leg-item,.subtitle{color:#888780}
+  th{color:#888780}
+  td{color:#d3d1c7;border-color:#3d3d3a}
+  tr:hover td{background:#333330}
+  .name{color:#e8e6e0}
+  .filter-btn{border-color:#5f5e5a;color:#888780;background:transparent}
+  .filter-btn.active{background:#0c447c;color:#b5d4f4;border-color:#185fa5}
+  .search{background:#333330;border-color:#5f5e5a;color:#d3d1c7}
+  .search:focus{background:#3d3d3a;border-color:#888780}
+  .p-guv{background:#0C447C;color:#B5D4F4}
+  .p-kat{background:#27500A;color:#C0DD97}
+  .p-spor{background:#3C3489;color:#CECBF6}
+  .p-gof{background:#633806;color:#FAC775}
+  .p-egit{background:#993C1D;color:#F5C4B3}
+  .p-nev{background:#721F1F;color:#F7C1C1}
+  .p-ois{background:#085041;color:#9FE1CB}
+  .empty{color:#5f5e5a}
+}
+</style>
+</head>
+<body>
+<h1>Yurttime Nisan Çalışma Takvimi</h1>
+<p class="subtitle">2025–2026 Bahar Dönemi</p>
+
+<div class="card">
+  <div class="card-header">
+    <div>
+      <div class="card-title">Haftalık Vardiya Planı</div>
+      <div class="card-sub">20 öğrenci</div>
+    </div>
+    <input class="search" id="search" placeholder="İsim ara..." oninput="render()">
+  </div>
+
+  <div class="legend">
+    <div class="leg-item"><span class="pill p-guv">Güvenlik</span></div>
+    <div class="leg-item"><span class="pill p-kat">Kat Görevlisi</span></div>
+    <div class="leg-item"><span class="pill p-spor">Spor Salonu</span></div>
+    <div class="leg-item"><span class="pill p-gof">Genç Ofis</span></div>
+    <div class="leg-item"><span class="pill p-egit">Eğitim S.</span></div>
+    <div class="leg-item"><span class="pill p-nev">Nevresim</span></div>
+    <div class="leg-item"><span class="pill p-ois">Öğrenci İşleri</span></div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="setFilter('tümü',this)">Tümü</button>
+    <button class="filter-btn" onclick="setFilter('Güvenlik',this)">Güvenlik</button>
+    <button class="filter-btn" onclick="setFilter('Kat Görevlisi',this)">Kat Görevlisi</button>
+    <button class="filter-btn" onclick="setFilter('Spor Salonu',this)">Spor Salonu</button>
+    <button class="filter-btn" onclick="setFilter('Genç Ofis',this)">Genç Ofis</button>
+    <button class="filter-btn" onclick="setFilter('Eğitim S.',this)">Eğitim S.</button>
+    <button class="filter-btn" onclick="setFilter('Nevresim',this)">Nevresim</button>
+    <button class="filter-btn" onclick="setFilter('Öğrenci İşleri',this)">Öğrenci İşleri</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>İsim</th>
+          <th>Pazartesi</th>
+          <th>Salı</th>
+          <th>Çarşamba</th>
+          <th>Perşembe</th>
+          <th>Cuma</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const data=[
+  {no:1,isim:"Erhan Batır",    paz:["17-19","Güvenlik"],     sal:["21-23","Güvenlik"],     car:["17-19","Spor Salonu"],  per:["09-11","Güvenlik"],           cum:null},
+  {no:2,isim:"Ufuk Ayan",     paz:["21-23","Genç Ofis"],    sal:["09-11","Güvenlik"],     car:["19-21","Kat Görevlisi D"],per:null,                          cum:["21-23","Genç Ofis"]},
+  {no:3,isim:"Mustafa Kızılırmak",paz:["21-23","Güvenlik"],sal:["21-23","Genç Ofis"],    car:null,                      per:["21-23","Genç Ofis"],           cum:["21-23","Spor Salonu"]},
+  {no:4,isim:"Muhammed Ulaş", paz:["20-22","Kat Görevlisi B"],sal:["15-17","Güvenlik"], car:["21-23","Spor Salonu"],  per:["15-17","Güvenlik"],           cum:null},
+  {no:5,isim:"Mehmet Eren Gümüş",paz:["11-13","Güvenlik"],  sal:["11-13","Güvenlik"],     car:["11-13","Güvenlik"],     per:null,                           cum:["10-12","Nevresim"]},
+  {no:6,isim:"Veysi Acet",    paz:["19-21","Spor Salonu"],  sal:["19-21","Spor Salonu"],  car:null,                     per:["20-22","Güvenlik"],           cum:["19-21","Spor Salonu"]},
+  {no:7,isim:"Baran Susam",   paz:null,                     sal:["20-22","Kat Görevlisi C"],car:["17-19","Güvenlik"],  per:["21-23","Kat Görevlisi B"],    cum:["13-15","Nevresim"]},
+  {no:8,isim:"Emirhan Oruç Demir",paz:["18-20","Güvenlik"], sal:["18-20","Güvenlik"],     car:["18-20","Genç Ofis"],    per:["18-20","Spor Salonu"],        cum:null},
+  {no:9,isim:"Yiğit Dünki",   paz:["17-19","Spor Salonu"], sal:["13-15","Eğitim S."],    car:["09-11","Güvenlik"],     per:["19-21","Genç Ofis"],          cum:null},
+  {no:10,isim:"Yusuf Can Zengin",paz:null,                  sal:["20-22","Genç Ofis"],    car:["20-22","Kat Görevlisi B"],per:["13-15","Nevresim"],         cum:["13-15","Güvenlik"]},
+  {no:11,isim:"Miraç Erdoğan",paz:["21-23","Spor Salonu"], sal:["20-22","Kat Görevlisi D"],car:["20-22","Güvenlik"],  per:["20-22","Kat Görevlisi A"],   cum:null},
+  {no:12,isim:"Berat Saykal", paz:["09-11","Güvenlik"],     sal:null,                     car:["21-23","Genç Ofis"],    per:["21-23","Güvenlik"],           cum:["20-22","Kat Görevlisi D"]},
+  {no:13,isim:"Süleyman Çam", paz:["20-22","Güvenlik"],     sal:["13-15","Güvenlik"],     car:["20-22","Kat Görevlisi C"],per:["11-13","Güvenlik"],         cum:null},
+  {no:14,isim:"Kerimcan Dede",paz:["14-16","Eğitim S."],   sal:["11-13","Eğitim S."],    car:["14-16","Eğitim S."],    per:null,                           cum:["11-13","Eğitim S."]},
+  {no:15,isim:"Furkan Saraç", paz:["21-23","Kat Görevlisi A"],sal:["17-19","Güvenlik"],  car:null,                     per:["21-23","Güvenlik"],           cum:["21-23","Güvenlik"]},
+  {no:16,isim:"Alperen Korkmaz",paz:null,                   sal:["20-22","Güvenlik"],     car:["20-22","Spor Salonu"],  per:["17-19","Spor Salonu"],        cum:["21-23","Güvenlik"]},
+  {no:17,isim:"Berat Yiğit Uyar",paz:["14-16","Güvenlik"], sal:null,                     car:["19-21","Güvenlik"],     per:["14-16","Öğrenci İşleri A."], cum:["10-12","Güvenlik"]},
+  {no:18,isim:"Evren Baki Sarıyel",paz:["15-17","Öğrenci İşleri A."],sal:null,           car:["15-17","Güvenlik"],     per:["13-15","Güvenlik"],           cum:["09-11","Güvenlik"]},
+  {no:19,isim:"Koray Yavuz Yalçınkaya",paz:["20-22","Kat Görevlisi C"],sal:["10-12","Nevresim"],car:["17-19","Spor Salonu"],per:["20-22","Kat Görevlisi C"],cum:null},
+  {no:20,isim:"Halis Meşhur", paz:["21-23","Kat Görevlisi D"],sal:["21-23","Spor Salonu"],car:null,                   per:["21-23","Spor Salonu"],        cum:["17-19","Güvenlik"]},
+];
+
+let activeFilter='tümü';
+
+function cls(g){
+  if(!g)return'';
+  const v=g.toLowerCase();
+  if(v.includes('güvenlik'))return'p-guv';
+  if(v.includes('kat görev'))return'p-kat';
+  if(v.includes('spor'))return'p-spor';
+  if(v.includes('genç ofis')||v.includes('genc ofis'))return'p-gof';
+  if(v.includes('eğitim')||v.includes('egitim'))return'p-egit';
+  if(v.includes('nevresim'))return'p-nev';
+  if(v.includes('öğrenci')||v.includes('ogrenci'))return'p-ois';
+  return'';
+}
+
+function normalize(s){return s.toLowerCase().replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c')}
+
+function matchFilter(gorev){
+  if(activeFilter==='tümü')return true;
+  if(!gorev)return false;
+  return normalize(gorev).includes(normalize(activeFilter));
+}
+
+function cellHtml(d){
+  if(!d)return'<span class="empty">—</span>';
+  const[saat,gorev]=d;
+  const show=activeFilter==='tümü'||matchFilter(gorev);
+  if(!show)return'<span class="empty">·</span>';
+  const short=gorev.replace('Kat Görevlisi','Kat').replace('Öğrenci İşleri A.','Öğr. İşl.').replace('Eğitim S.','Eğitim');
+  return`<div class="cell"><div class="hour">${saat}</div><span class="pill ${cls(gorev)}">${short}</span></div>`;
+}
+
+function render(){
+  const q=normalize(document.getElementById('search').value);
+  const rows=data.filter(r=>{
+    if(q&&!normalize(r.isim).includes(q))return false;
+    if(activeFilter==='tümü')return true;
+    return[r.paz,r.sal,r.car,r.per,r.cum].some(d=>d&&matchFilter(d[1]));
+  });
+  document.getElementById('tbody').innerHTML=rows.map(r=>`
+    <tr>
+      <td style="color:#888780">${r.no}</td>
+      <td class="name">${r.isim}</td>
+      <td>${cellHtml(r.paz)}</td>
+      <td>${cellHtml(r.sal)}</td>
+      <td>${cellHtml(r.car)}</td>
+      <td>${cellHtml(r.per)}</td>
+      <td>${cellHtml(r.cum)}</td>
+    </tr>`).join('');
+}
+
+function setFilter(f,btn){
+  activeFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

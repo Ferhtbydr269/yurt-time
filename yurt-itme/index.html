@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YurtTime — Nisan 2026 Çalışma Yönetim Sistemi</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0b0f;
+  --bg2: #111218;
+  --bg3: #16181f;
+  --card: #1a1d27;
+  --card2: #1f2230;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --text: #f0f2ff;
+  --text2: #9ba3bf;
+  --text3: #5f6880;
+  --accent: #6c63ff;
+  --accent2: #9d97ff;
+  --accent-glow: rgba(108,99,255,0.25);
+  --green: #22c55e;
+  --green-dim: rgba(34,197,94,0.15);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.15);
+  --orange: #f97316;
+  --orange-dim: rgba(249,115,22,0.15);
+  --purple: #a855f7;
+  --purple-dim: rgba(168,85,247,0.15);
+  --red: #ef4444;
+  --red-dim: rgba(239,68,68,0.15);
+  --yellow: #eab308;
+  --yellow-dim: rgba(234,179,8,0.15);
+  --teal: #14b8a6;
+  --teal-dim: rgba(20,184,166,0.15);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --radius-xs: 5px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.4);
+  --transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+/* ===== LOGIN SCREEN ===== */
+#login-screen {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000;
+  background-image: radial-gradient(ellipse at 30% 20%, rgba(108,99,255,0.12) 0%, transparent 50%),
+                    radial-gradient(ellipse at 70% 80%, rgba(168,85,247,0.08) 0%, transparent 50%);
+}
+
+.login-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.5rem;
+  width: min(420px, 90vw);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(108,99,255,0.1);
+  animation: fadeUp 0.5s ease;
+}
+
+.login-logo {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 2rem;
+}
+
+.login-logo-icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+
+.login-logo-text h1 { font-size: 1.3rem; font-weight: 700; }
+.login-logo-text p { font-size: 0.75rem; color: var(--text2); }
+
+.login-tabs {
+  display: flex; gap: 4px;
+  background: var(--bg3);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.login-tab {
+  flex: 1; padding: 8px;
+  border: none; border-radius: 7px;
+  background: transparent;
+  color: var(--text2);
+  font-size: 0.85rem; font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: 'Inter', sans-serif;
+}
+
+.login-tab.active {
+  background: var(--card2);
+  color: var(--text);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+}
+
+.form-group { margin-bottom: 1rem; }
+
+.form-label {
+  display: block;
+  font-size: 0.8rem; font-weight: 500;
+  color: var(--text2);
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: var(--transition);
+}
+
+.form-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.form-input::placeholder { color: var(--text3); }
+
+.login-btn {
+  width: 100%; padding: 11px;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  border: none; border-radius: var(--radius-sm);
+  color: white; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; transition: var(--transition);
+  font-family: 'Inter', sans-serif;
+  margin-top: 0.5rem;
+  position: relative; overflow: hidden;
+}
+
+.login-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px var(--accent-glow); }
+.login-btn:active { transform: translateY(0); }
+
+.login-hint {
+  margin-top: 1rem;
+  padding: 10px 12px;
+  background: var(--bg3);
+  border-radius: var(--radius-xs);
+  font-size: 0.75rem; color: var(--text2);
+  border-left: 2px solid var(--accent);
+}
+
+.login-error {
+  color: var(--red);
+  font-size: 0.8rem;
+  margin-top: 8px;
+  display: none;
+}
+
+/* ===== APP LAYOUT ===== */
+#app { display: none; min-height: 100vh; }
+
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0;
+  width: 240px;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  z-index: 100;
+  transition: var(--transition);
+}
+
+.sidebar-logo {
+  padding: 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+
+.sidebar-logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--accent), var(--purple));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+
+.sidebar-logo-text { font-size: 0.95rem; font-weight: 700; }
+.sidebar-logo-sub { font-size: 0.65rem; color: var(--text3); }
+
+.sidebar-nav { flex: 1; padding: 0.75rem 0.75rem; overflow-y: auto; }
+
+.nav-section { margin-bottom: 1.25rem; }
+
+.nav-section-title {
+  font-size: 0.65rem; font-weight: 600;
+  color: var(--text3); letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 0.5rem;
+  margin-bottom: 6px;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.85rem; font-weight: 500;
+  color: var(--text2);
+  margin-bottom: 2px;
+  border: none; background: transparent; width: 100%;
+  text-align: left; font-family: 'Inter', sans-serif;
+}
+
+.nav-item:hover { background: var(--bg3); color: var(--text); }
+.nav-item.active { background: var(--accent-glow); color: var(--accent2); }
+.nav-item-icon { font-size: 1rem; width: 20px; text-align: center; }
+.nav-badge {
+  margin-left: auto;
+  background: var(--accent);
+  color: white;
+  font-size: 0.65rem; font-weight: 700;
+  padding: 1px 6px; border-radius: 20px;
+}
+
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.user-card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  background: var(--bg3);
+  border-radius: var(--radius-sm);
+}
+
+.user-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem; font-weight: 700;
+  flex-shrink: 0;
+}
+
+.user-info { flex: 1; min-width: 0; }
+.user-name { font-size: 0.82rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-role { font-size: 0.7rem; color: var(--text3); }
+
+.logout-btn {
+  background: none; border: none; color: var(--text3);
+  cursor: pointer; font-size: 0.85rem; padding: 2px 4px;
+  border-radius: 4px; transition: var(--transition);
+}
+.logout-btn:hover { color: var(--red); }
+
+/* ===== MAIN CONTENT ===== */
+.main {
+  margin-left: 240px;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+}
+
+.topbar {
+  height: 60px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; padding: 0 1.5rem;
+  gap: 1rem;
+  position: sticky; top: 0; z-index: 50;
+}
+
+.topbar-title { font-size: 1rem; font-weight: 600; flex: 1; }
+.topbar-date { font-size: 0.8rem; color: var(--text2); }
+
+.topbar-search {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 12px;
+  width: 200px;
+}
+
+.topbar-search input {
+  background: none; border: none; outline: none;
+  color: var(--text); font-size: 0.85rem;
+  font-family: 'Inter', sans-serif; width: 100%;
+}
+
+.topbar-search input::placeholder { color: var(--text3); }
+
+.content { flex: 1; padding: 1.5rem; }
+
+/* ===== PAGES ===== */
+.page { display: none; animation: fadeUp 0.3s ease; }
+.page.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== STATS GRID ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.25rem;
+  position: relative; overflow: hidden;
+  transition: var(--transition);
+}
+
+.stat-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: var(--shadow); }
+
+.stat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.stat-card.c-purple::before { background: linear-gradient(90deg, var(--purple), var(--accent)); }
+.stat-card.c-green::before { background: linear-gradient(90deg, var(--green), var(--teal)); }
+.stat-card.c-blue::before { background: linear-gradient(90deg, var(--blue), var(--accent)); }
+.stat-card.c-orange::before { background: linear-gradient(90deg, var(--orange), var(--yellow)); }
+
+.stat-icon {
+  font-size: 1.5rem; margin-bottom: 0.5rem;
+}
+
+.stat-value { font-size: 1.8rem; font-weight: 800; line-height: 1; }
+.stat-label { font-size: 0.75rem; color: var(--text2); margin-top: 4px; }
+.stat-sub { font-size: 0.7rem; color: var(--text3); margin-top: 2px; }
+
+/* ===== SECTION HEADER ===== */
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1rem; gap: 1rem; flex-wrap: wrap;
+}
+
+.section-title { font-size: 1rem; font-weight: 700; }
+.section-sub { font-size: 0.75rem; color: var(--text2); margin-top: 2px; }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+
+/* ===== FILTERS ===== */
+.filters-row {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.filter-pill {
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text2);
+  font-size: 0.75rem; font-weight: 500;
+  cursor: pointer; transition: var(--transition);
+  font-family: 'Inter', sans-serif;
+}
+
+.filter-pill:hover { border-color: var(--border2); color: var(--text); }
+.filter-pill.active { background: var(--accent-glow); border-color: var(--accent); color: var(--accent2); }
+
+/* ===== TABLE ===== */
+.table-wrap { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; min-width: 700px; }
+
+thead tr { border-bottom: 1px solid var(--border); }
+
+th {
+  padding: 10px 12px;
+  font-size: 0.72rem; font-weight: 600;
+  color: var(--text3);
+  text-align: left;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+td {
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+
+.name-cell {
+  display: flex; align-items: center; gap: 8px;
+}
+
+.mini-avatar {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 700; flex-shrink: 0;
+}
+
+/* ===== DUTY PILLS ===== */
+.duty-cell { display: flex; flex-direction: column; gap: 3px; }
+.duty-time { font-size: 0.68rem; color: var(--text3); margin-bottom: 1px; }
+
+.pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 20px;
+  font-size: 0.72rem; font-weight: 500; white-space: nowrap;
+}
+
+.p-guv { background: var(--blue-dim); color: #60a5fa; }
+.p-kat { background: var(--green-dim); color: #4ade80; }
+.p-spor { background: var(--purple-dim); color: #c084fc; }
+.p-gof { background: var(--orange-dim); color: #fb923c; }
+.p-egit { background: var(--red-dim); color: #f87171; }
+.p-nev { background: rgba(244,114,182,0.15); color: #f472b6; }
+.p-ois { background: var(--teal-dim); color: #2dd4bf; }
+.p-izin { background: var(--yellow-dim); color: #facc15; }
+.p-empty { color: var(--text3); font-size: 0.75rem; }
+
+/* ===== DAY GRID VIEW ===== */
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.day-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.day-card:hover { border-color: var(--border2); box-shadow: var(--shadow); }
+
+.day-card-header {
+  padding: 0.75rem 1rem;
+  background: var(--card2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.day-name { font-size: 0.9rem; font-weight: 700; }
+.day-date { font-size: 0.72rem; color: var(--text3); }
+.day-count {
+  background: var(--accent-glow);
+  color: var(--accent2);
+  font-size: 0.7rem; font-weight: 600;
+  padding: 2px 8px; border-radius: 20px;
+}
+
+.day-duties { padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+
+.duty-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 8px;
+  background: var(--bg3);
+  border-radius: var(--radius-xs);
+  gap: 8px;
+}
+
+.duty-row-name { font-size: 0.8rem; font-weight: 500; flex: 1; }
+.duty-row-info { display: flex; align-items: center; gap: 6px; }
+.duty-row-time { font-size: 0.68rem; color: var(--text3); }
+
+/* ===== EMPLOYEE CARD VIEW ===== */
+.employee-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.emp-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  transition: var(--transition);
+  cursor: pointer;
+}
+
+.emp-card:hover { border-color: var(--border2); transform: translateY(-3px); box-shadow: var(--shadow); }
+
+.emp-card-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.emp-avatar {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; font-weight: 700; flex-shrink: 0;
+}
+
+.emp-name { font-size: 0.9rem; font-weight: 600; }
+.emp-no { font-size: 0.72rem; color: var(--text3); }
+
+.emp-week {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px;
+}
+
+.emp-day {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+
+.emp-day-label { font-size: 0.6rem; color: var(--text3); font-weight: 500; }
+
+.emp-day-dot {
+  width: 28px; height: 28px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.55rem; font-weight: 600;
+  text-align: center; line-height: 1.2;
+}
+
+.emp-day-dot.off { background: var(--bg3); color: var(--text3); }
+.emp-day-dot.guv { background: var(--blue-dim); color: #60a5fa; }
+.emp-day-dot.kat { background: var(--green-dim); color: #4ade80; }
+.emp-day-dot.spor { background: var(--purple-dim); color: #c084fc; }
+.emp-day-dot.gof { background: var(--orange-dim); color: #fb923c; }
+.emp-day-dot.egit { background: var(--red-dim); color: #f87171; }
+.emp-day-dot.nev { background: rgba(244,114,182,0.15); color: #f472b6; }
+.emp-day-dot.ois { background: var(--teal-dim); color: #2dd4bf; }
+
+.emp-stats {
+  display: flex; gap: 8px; margin-top: 1rem;
+  padding-top: 1rem; border-top: 1px solid var(--border);
+}
+
+.emp-stat { flex: 1; text-align: center; }
+.emp-stat-val { font-size: 1rem; font-weight: 700; }
+.emp-stat-lbl { font-size: 0.65rem; color: var(--text3); }
+
+/* ===== TODAY VIEW ===== */
+.timeline {
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.timeline-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  transition: var(--transition);
+}
+
+.timeline-item:hover { border-color: var(--border2); }
+
+.timeline-time {
+  font-size: 0.78rem; font-weight: 600; color: var(--text2);
+  min-width: 60px;
+}
+
+.timeline-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+
+.timeline-name { font-size: 0.85rem; font-weight: 500; flex: 1; }
+.timeline-task { margin-left: auto; }
+
+/* ===== MY SCHEDULE (EMPLOYEE VIEW) ===== */
+.my-schedule-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+  margin-top: 1rem;
+}
+
+.my-day-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  transition: var(--transition);
+  min-height: 100px;
+}
+
+.my-day-card.has-duty { border-color: rgba(108,99,255,0.3); }
+.my-day-card.today { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent-glow); }
+.my-day-card.off { opacity: 0.5; }
+
+.my-day-name { font-size: 0.7rem; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+.my-day-time { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+
+/* ===== ANIMATIONS ===== */
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+.pulse { animation: pulse 2s infinite; }
+
+/* ===== BADGE ===== */
+.badge-live {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba(34,197,94,0.15);
+  color: var(--green);
+  font-size: 0.7rem; font-weight: 600;
+  padding: 3px 8px; border-radius: 20px;
+}
+
+.badge-live::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+
+/* ===== SEARCH BAR ===== */
+.search-bar {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 7px 12px;
+}
+
+.search-bar input {
+  background: none; border: none; outline: none;
+  color: var(--text); font-size: 0.85rem;
+  font-family: 'Inter', sans-serif;
+  width: 180px;
+}
+
+.search-bar input::placeholder { color: var(--text3); }
+
+/* ===== VIEW TOGGLE ===== */
+.view-toggle {
+  display: flex; gap: 2px;
+  background: var(--bg3);
+  border-radius: var(--radius-xs);
+  padding: 3px;
+}
+
+.view-btn {
+  padding: 5px 10px;
+  border: none; border-radius: 4px;
+  background: transparent; color: var(--text3);
+  cursor: pointer; font-size: 0.8rem;
+  transition: var(--transition);
+  font-family: 'Inter', sans-serif;
+}
+
+.view-btn.active { background: var(--card2); color: var(--text); }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar {
+  height: 4px; background: var(--bg3);
+  border-radius: 2px; overflow: hidden;
+  margin-top: 6px;
+}
+
+.progress-fill {
+  height: 100%; border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+/* ===== LOCATION OVERVIEW ===== */
+.location-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.location-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.1rem;
+  transition: var(--transition);
+}
+
+.location-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+
+.location-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
+.location-name { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+.location-count { font-size: 0.75rem; color: var(--text2); }
+
+.location-persons {
+  margin-top: 0.75rem;
+  display: flex; flex-direction: column; gap: 4px;
+}
+
+.location-person {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.78rem; color: var(--text2);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .my-schedule-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ===== MOBILE TOPBAR MENU ===== */
+.menu-toggle {
+  display: none;
+  background: none; border: none;
+  color: var(--text2); font-size: 1.2rem; cursor: pointer;
+  padding: 4px;
+}
+
+@media (max-width: 900px) { .menu-toggle { display: block; } }
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center; padding: 3rem;
+  color: var(--text3);
+}
+
+.empty-state-icon { font-size: 3rem; margin-bottom: 1rem; }
+.empty-state-text { font-size: 0.9rem; }
+
+/* ===== TOOLTIP ===== */
+[data-tip] { position: relative; cursor: help; }
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute; bottom: calc(100% + 6px); left: 50%;
+  transform: translateX(-50%);
+  background: var(--card2);
+  border: 1px solid var(--border2);
+  color: var(--text); font-size: 0.72rem;
+  padding: 4px 8px; border-radius: 5px;
+  white-space: nowrap; pointer-events: none;
+  opacity: 0; transition: opacity 0.2s;
+  z-index: 200;
+}
+
+[data-tip]:hover::after { opacity: 1; }
+
+/* ===== OVERLAY ===== */
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 99;
+}
+
+.overlay.open { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">🏠</div>
+      <div class="login-logo-text">
+        <h1>YurtTime</h1>
+        <p>Nisan 2026 — Çalışma Yönetim Sistemi</p>
+      </div>
+    </div>
+
+    <div class="login-tabs">
+      <button class="login-tab active" onclick="switchLoginTab('calisan', this)">👤 Çalışan</button>
+      <button class="login-tab" onclick="switchLoginTab('yonetici', this)">🛡️ Yönetici</button>
+    </div>
+
+    <div id="login-calisan">
+      <div class="form-group">
+        <label class="form-label">İsim Seçin</label>
+        <select class="form-input" id="emp-select">
+          <option value="">— Çalışan seçin —</option>
+          <option>Erhan Batır</option>
+          <option>Ufuk Ayan</option>
+          <option>Mustafa Kızılırmak</option>
+          <option>Muhammed Ulaş</option>
+          <option>Mehmet Eren Gümüş</option>
+          <option>Veysi Acet</option>
+          <option>Baran Susam</option>
+          <option>Emirhan Oruç Demir</option>
+          <option>Yiğit Dünki</option>
+          <option>Yusuf Can Zengin</option>
+          <option>Miraç Erdoğan</option>
+          <option>Berat Saykal</option>
+          <option>Süleyman Çam</option>
+          <option>Kerimcan Dede</option>
+          <option>Furkan Saraç</option>
+          <option>Alperen Korkmaz</option>
+          <option>Berat Yiğit Uyar</option>
+          <option>Evren Baki Sarıyel</option>
+          <option>Koray Yavuz Yalçınkaya</option>
+          <option>Halis Meşhur</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Şifre</label>
+        <input class="form-input" type="password" id="emp-pass" placeholder="••••••" value="">
+      </div>
+      <div class="login-error" id="emp-error">❌ Hatalı giriş. Lütfen tekrar deneyin.</div>
+      <button class="login-btn" onclick="loginEmployee()">Giriş Yap →</button>
+      <div class="login-hint">💡 Demo: Herhangi bir çalışanı seçip şifre alanını boş bırakın</div>
+    </div>
+
+    <div id="login-yonetici" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">Yönetici ID</label>
+        <input class="form-input" type="text" id="mgr-user" placeholder="admin" value="admin">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Şifre</label>
+        <input class="form-input" type="password" id="mgr-pass" placeholder="••••••" value="admin1234">
+      </div>
+      <div class="login-error" id="mgr-error">❌ Hatalı yönetici bilgisi.</div>
+      <button class="login-btn" onclick="loginManager()">Yönetici Girişi →</button>
+      <div class="login-hint">💡 Demo: kullanıcı <strong>admin</strong> / şifre <strong>admin1234</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ OVERLAY ============ -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">🏠</div>
+      <div>
+        <div class="sidebar-logo-text">YurtTime</div>
+        <div class="sidebar-logo-sub">Nisan 2026</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- EMPLOYEE NAV -->
+      <div class="nav-section" id="nav-employee">
+        <div class="nav-section-title">Çalışan Paneli</div>
+        <button class="nav-item active" onclick="showPage('my-schedule')">
+          <span class="nav-item-icon">📅</span> Programım
+        </button>
+        <button class="nav-item" onclick="showPage('my-today')">
+          <span class="nav-item-icon">🎯</span> Bugün
+        </button>
+        <button class="nav-item" onclick="showPage('my-colleagues')">
+          <span class="nav-item-icon">👥</span> Ekibim
+        </button>
+      </div>
+
+      <!-- MANAGER NAV -->
+      <div class="nav-section" id="nav-manager" style="display:none;">
+        <div class="nav-section-title">Yönetim</div>
+        <button class="nav-item active" onclick="showPage('dashboard')">
+          <span class="nav-item-icon">📊</span> Dashboard
+        </button>
+        <button class="nav-item" onclick="showPage('schedule')">
+          <span class="nav-item-icon">📅</span> Haftalık Program
+        </button>
+        <button class="nav-item" onclick="showPage('employees')">
+          <span class="nav-item-icon">👥</span> Çalışanlar
+        </button>
+        <button class="nav-item" onclick="showPage('locations')">
+          <span class="nav-item-icon">📍</span> Konumlar
+        </button>
+        <button class="nav-item" onclick="showPage('today')">
+          <span class="nav-item-icon">⏰</span> Bugünkü Vardiyalar
+        </button>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="user-avatar" id="sidebar-avatar" style="background: linear-gradient(135deg, #6c63ff, #a855f7);">👤</div>
+        <div class="user-info">
+          <div class="user-name" id="sidebar-name">—</div>
+          <div class="user-role" id="sidebar-role">—</div>
+        </div>
+        <button class="logout-btn" onclick="logout()" title="Çıkış">⬅️</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <div class="topbar-title" id="topbar-title">YurtTime</div>
+      <div class="topbar-date" id="topbar-date"></div>
+      <span class="badge-live">Canlı</span>
+    </div>
+
+    <div class="content">
+
+      <!-- ========== DASHBOARD PAGE (MANAGER) ========== -->
+      <div class="page" id="page-dashboard">
+        <div class="section-header" style="margin-bottom:1.25rem;">
+          <div>
+            <div class="section-title">📊 Genel Bakış</div>
+            <div class="section-sub">Nisan 2026 — Haftalık Özet</div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card c-purple">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">20</div>
+            <div class="stat-label">Toplam Çalışan</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,var(--purple),var(--accent))"></div></div>
+          </div>
+          <div class="stat-card c-green">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="stat-active">—</div>
+            <div class="stat-label">Bugün Aktif</div>
+            <div class="progress-bar"><div class="progress-fill" id="stat-active-bar" style="width:0%;background:linear-gradient(90deg,var(--green),var(--teal))"></div></div>
+          </div>
+          <div class="stat-card c-blue">
+            <div class="stat-icon">📍</div>
+            <div class="stat-value">7</div>
+            <div class="stat-label">Görev Alanı</div>
+            <div class="stat-sub">Güvenlik, Kat, Spor + 4</div>
+          </div>
+          <div class="stat-card c-orange">
+            <div class="stat-icon">⏱️</div>
+            <div class="stat-value" id="stat-shifts">—</div>
+            <div class="stat-label">Toplam Vardiya</div>
+            <div class="stat-sub">Bu hafta</div>
+          </div>
+        </div>
+
+        <!-- Today Quick View -->
+        <div class="section-header">
+          <div>
+            <div class="section-title">⚡ Bugünkü Durum</div>
+            <div class="section-sub" id="today-day-label">—</div>
+          </div>
+        </div>
+
+        <div id="dashboard-today-list" class="timeline" style="margin-bottom:1.5rem;"></div>
+
+        <!-- Location Summary -->
+        <div class="section-header">
+          <div class="section-title">📍 Görev Alanı Özeti</div>
+        </div>
+        <div class="location-grid" id="location-summary"></div>
+      </div>
+
+      <!-- ========== SCHEDULE PAGE (MANAGER) ========== -->
+      <div class="page" id="page-schedule">
+        <div class="section-header">
+          <div>
+            <div class="section-title">📅 Haftalık Çalışma Programı</div>
+            <div class="section-sub">20 çalışan — Nisan 2026</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <div class="search-bar">
+              <span style="color:var(--text3);">🔍</span>
+              <input type="text" id="sched-search" placeholder="İsim ara..." oninput="renderSchedule()">
+            </div>
+            <div class="view-toggle">
+              <button class="view-btn active" id="vb-table" onclick="switchView('table',this)">📋 Tablo</button>
+              <button class="view-btn" id="vb-card" onclick="switchView('card',this)">🃏 Kart</button>
+              <button class="view-btn" id="vb-day" onclick="switchView('day',this)">📆 Gün</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="filters-row" id="sched-filters">
+            <button class="filter-pill active" onclick="setScheduleFilter('tümü',this)">Tümü</button>
+            <button class="filter-pill" onclick="setScheduleFilter('Güvenlik',this)">🔷 Güvenlik</button>
+            <button class="filter-pill" onclick="setScheduleFilter('Kat Görevlisi',this)">🟢 Kat Görevlisi</button>
+            <button class="filter-pill" onclick="setScheduleFilter('Spor Salonu',this)">🟣 Spor Salonu</button>
+            <button class="filter-pill" onclick="setScheduleFilter('Genç Ofis',this)">🟠 Genç Ofis</button>
+            <button class="filter-pill" onclick="setScheduleFilter('Eğitim',this)">🔴 Eğitim Salonu</button>
+            <button class="filter-pill" onclick="setScheduleFilter('Nevresim',this)">🩷 Nevresim</button>
+            <button class="filter-pill" onclick="setScheduleFilter('Öğrenci',this)">🩵 Öğrenci İşleri</button>
+          </div>
+
+          <!-- TABLE VIEW -->
+          <div id="view-table">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Çalışan</th>
+                    <th>Pazartesi</th>
+                    <th>Salı</th>
+                    <th>Çarşamba</th>
+                    <th>Perşembe</th>
+                    <th>Cuma</th>
+                    <th>Toplam</th>
+                  </tr>
+                </thead>
+                <tbody id="sched-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- CARD VIEW -->
+          <div id="view-card" style="display:none;padding:1rem;">
+            <div class="employee-grid" id="emp-card-grid"></div>
+          </div>
+
+          <!-- DAY VIEW -->
+          <div id="view-day" style="display:none;padding:1rem;">
+            <div class="day-grid" id="day-grid-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== EMPLOYEES PAGE (MANAGER) ========== -->
+      <div class="page" id="page-employees">
+        <div class="section-header">
+          <div>
+            <div class="section-title">👥 Çalışan Listesi</div>
+            <div class="section-sub">20 kişi — Nisan 2026</div>
+          </div>
+          <div class="search-bar">
+            <span style="color:var(--text3);">🔍</span>
+            <input type="text" id="emp-search" placeholder="İsim ara..." oninput="renderEmployees()">
+          </div>
+        </div>
+        <div class="employee-grid" id="emp-list-grid"></div>
+      </div>
+
+      <!-- ========== LOCATIONS PAGE (MANAGER) ========== -->
+      <div class="page" id="page-locations">
+        <div class="section-header">
+          <div>
+            <div class="section-title">📍 Görev Konumları</div>
+            <div class="section-sub">Tüm çalışma alanları ve personel dağılımı</div>
+          </div>
+        </div>
+        <div class="location-grid" id="locations-full"></div>
+      </div>
+
+      <!-- ========== TODAY PAGE (MANAGER) ========== -->
+      <div class="page" id="page-today">
+        <div class="section-header">
+          <div>
+            <div class="section-title">⏰ Bugünkü Vardiyalar</div>
+            <div class="section-sub" id="today-full-label">—</div>
+          </div>
+        </div>
+        <div id="today-full-list"></div>
+      </div>
+
+      <!-- ========== MY SCHEDULE (EMPLOYEE) ========== -->
+      <div class="page" id="page-my-schedule">
+        <div class="section-header">
+          <div>
+            <div class="section-title">📅 Haftalık Programım</div>
+            <div class="section-sub" id="my-name-label">—</div>
+          </div>
+        </div>
+
+        <div class="my-schedule-grid" id="my-schedule-grid"></div>
+
+        <div style="margin-top:1.5rem;">
+          <div class="section-title" style="margin-bottom:1rem;">📊 Özet</div>
+          <div class="stats-grid" id="my-stats"></div>
+        </div>
+      </div>
+
+      <!-- ========== MY TODAY (EMPLOYEE) ========== -->
+      <div class="page" id="page-my-today">
+        <div class="section-header">
+          <div>
+            <div class="section-title">🎯 Bugünkü Görevim</div>
+            <div class="section-sub" id="my-today-label">—</div>
+          </div>
+        </div>
+        <div id="my-today-content"></div>
+      </div>
+
+      <!-- ========== MY COLLEAGUES (EMPLOYEE) ========== -->
+      <div class="page" id="page-my-colleagues">
+        <div class="section-header">
+          <div>
+            <div class="section-title">👥 Ekibim</div>
+            <div class="section-sub">Bu hafta aynı vardiyada çalıştığım kişiler</div>
+          </div>
+        </div>
+        <div class="employee-grid" id="colleagues-grid"></div>
+      </div>
+
+    </div><!-- /content -->
+  </main>
+</div><!-- /app -->
+
+<script>
+// =====================================================================
+// DATA
+// =====================================================================
+const EMPLOYEES = [
+  {no:1, isim:"Erhan Batır",           paz:["17-19","Güvenlik"],        sal:["21-23","Güvenlik"],        car:["17-19","Spor Salonu"],       per:["09-11","Güvenlik"],             cum:null},
+  {no:2, isim:"Ufuk Ayan",             paz:["21-23","Genç Ofis"],       sal:["09-11","Güvenlik"],        car:["19-21","Kat Görevlisi D"],   per:null,                             cum:["21-23","Genç Ofis"]},
+  {no:3, isim:"Mustafa Kızılırmak",    paz:["21-23","Güvenlik"],        sal:["21-23","Genç Ofis"],       car:null,                          per:["21-23","Genç Ofis"],            cum:["21-23","Spor Salonu"]},
+  {no:4, isim:"Muhammed Ulaş",         paz:["20-22","Kat Görevlisi B"], sal:["15-17","Güvenlik"],        car:["21-23","Spor Salonu"],       per:["15-17","Güvenlik"],             cum:null},
+  {no:5, isim:"Mehmet Eren Gümüş",     paz:["11-13","Güvenlik"],        sal:["11-13","Güvenlik"],        car:["11-13","Güvenlik"],          per:null,                             cum:["10-12","Nevresim"]},
+  {no:6, isim:"Veysi Acet",            paz:["19-21","Spor Salonu"],     sal:["19-21","Spor Salonu"],     car:null,                          per:["20-22","Güvenlik"],             cum:["19-21","Spor Salonu"]},
+  {no:7, isim:"Baran Susam",           paz:null,                        sal:["20-22","Kat Görevlisi C"], car:["17-19","Güvenlik"],          per:["21-23","Kat Görevlisi B"],      cum:["13-15","Nevresim"]},
+  {no:8, isim:"Emirhan Oruç Demir",    paz:["18-20","Güvenlik"],        sal:["18-20","Güvenlik"],        car:["18-20","Genç Ofis"],         per:["18-20","Spor Salonu"],          cum:null},
+  {no:9, isim:"Yiğit Dünki",           paz:["17-19","Spor Salonu"],     sal:["13-15","Eğitim Salonu"],   car:["09-11","Güvenlik"],          per:["19-21","Genç Ofis"],            cum:null},
+  {no:10,isim:"Yusuf Can Zengin",      paz:null,                        sal:["20-22","Genç Ofis"],       car:["20-22","Kat Görevlisi B"],   per:["13-15","Nevresim"],             cum:["13-15","Güvenlik"]},
+  {no:11,isim:"Miraç Erdoğan",         paz:["21-23","Spor Salonu"],     sal:["20-22","Kat Görevlisi D"], car:["20-22","Güvenlik"],          per:["20-22","Kat Görevlisi A"],      cum:null},
+  {no:12,isim:"Berat Saykal",          paz:["09-11","Güvenlik"],        sal:null,                        car:["21-23","Genç Ofis"],         per:["21-23","Güvenlik"],             cum:["20-22","Kat Görevlisi D"]},
+  {no:13,isim:"Süleyman Çam",          paz:["20-22","Güvenlik"],        sal:["13-15","Güvenlik"],        car:["20-22","Kat Görevlisi C"],   per:["11-13","Güvenlik"],             cum:null},
+  {no:14,isim:"Kerimcan Dede",         paz:["14-16","Eğitim Salonu"],   sal:["11-13","Eğitim Salonu"],   car:["14-16","Eğitim Salonu"],     per:null,                             cum:["11-13","Eğitim Salonu"]},
+  {no:15,isim:"Furkan Saraç",          paz:["21-23","Kat Görevlisi A"], sal:["17-19","Güvenlik"],        car:null,                          per:["21-23","Güvenlik"],             cum:["21-23","Güvenlik"]},
+  {no:16,isim:"Alperen Korkmaz",       paz:null,                        sal:["20-22","Güvenlik"],        car:["20-22","Spor Salonu"],       per:["17-19","Spor Salonu"],          cum:["21-23","Güvenlik"]},
+  {no:17,isim:"Berat Yiğit Uyar",      paz:["14-16","Güvenlik"],        sal:null,                        car:["19-21","Güvenlik"],          per:["14-16","Öğrenci İşleri"],       cum:["10-12","Güvenlik"]},
+  {no:18,isim:"Evren Baki Sarıyel",    paz:["15-17","Öğrenci İşleri"],  sal:null,                        car:["15-17","Güvenlik"],          per:["13-15","Güvenlik"],             cum:["09-11","Güvenlik"]},
+  {no:19,isim:"Koray Yavuz Yalçınkaya",paz:["20-22","Kat Görevlisi C"], sal:["10-12","Nevresim"],        car:["17-19","Spor Salonu"],       per:["20-22","Kat Görevlisi C"],      cum:null},
+  {no:20,isim:"Halis Meşhur",          paz:["21-23","Kat Görevlisi D"], sal:["21-23","Spor Salonu"],     car:null,                          per:["21-23","Spor Salonu"],           cum:["17-19","Güvenlik"]},
+];
+
+const DAYS = ["paz","sal","car","per","cum"];
+const DAY_NAMES = {paz:"Pazartesi",sal:"Salı",car:"Çarşamba",per:"Perşembe",cum:"Cuma"};
+const LOCATIONS = [
+  {key:"Güvenlik",      icon:"🔒", color:"--blue"},
+  {key:"Kat Görevlisi", icon:"🏢", color:"--green"},
+  {key:"Spor Salonu",   icon:"💪", color:"--purple"},
+  {key:"Genç Ofis",     icon:"💼", color:"--orange"},
+  {key:"Eğitim Salonu", icon:"📚", color:"--red"},
+  {key:"Nevresim",      icon:"🛏️", color:"--yellow"},
+  {key:"Öğrenci İşleri",icon:"📋", color:"--teal"},
+];
+
+const AVATAR_COLORS = [
+  "linear-gradient(135deg,#6c63ff,#a855f7)",
+  "linear-gradient(135deg,#3b82f6,#6c63ff)",
+  "linear-gradient(135deg,#22c55e,#14b8a6)",
+  "linear-gradient(135deg,#f97316,#eab308)",
+  "linear-gradient(135deg,#ef4444,#f97316)",
+  "linear-gradient(135deg,#a855f7,#ec4899)",
+  "linear-gradient(135deg,#14b8a6,#3b82f6)",
+];
+
+// =====================================================================
+// STATE
+// =====================================================================
+let currentUser = null;
+let currentRole = null;
+let schedFilter = 'tümü';
+let schedView = 'table';
+
+// =====================================================================
+// HELPERS
+// =====================================================================
+function getAvatarColor(no) { return AVATAR_COLORS[(no-1) % AVATAR_COLORS.length]; }
+
+function getInitials(name) {
+  return name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+
+function dutyClass(gorev) {
+  if (!gorev) return '';
+  const v = gorev.toLowerCase();
+  if (v.includes('güvenlik')) return 'guv';
+  if (v.includes('kat görev')) return 'kat';
+  if (v.includes('spor')) return 'spor';
+  if (v.includes('genç ofis') || v.includes('genc ofis')) return 'gof';
+  if (v.includes('eğitim') || v.includes('egitim')) return 'egit';
+  if (v.includes('nevresim')) return 'nev';
+  if (v.includes('öğrenci') || v.includes('ogrenci')) return 'ois';
+  return '';
+}
+
+function pillClass(gorev) { return 'p-' + dutyClass(gorev); }
+
+function shortDuty(g) {
+  if (!g) return '';
+  return g.replace('Kat Görevlisi ','Kat ').replace('Öğrenci İşleri','Öğr.İşl.').replace('Eğitim Salonu','Eğitim');
+}
+
+function norm(s) {
+  return s.toLowerCase()
+    .replace(/ğ/g,'g').replace(/ü/g,'u').replace(/ş/g,'s')
+    .replace(/ı/g,'i').replace(/ö/g,'o').replace(/ç/g,'c');
+}
+
+function matchFilter(gorev, f) {
+  if (f === 'tümü') return true;
+  if (!gorev) return false;
+  return norm(gorev).includes(norm(f));
+}
+
+function getTodayKey() {
+  const d = new Date().getDay();
+  const map = {1:'paz',2:'sal',3:'car',4:'per',5:'cum'};
+  return map[d] || null;
+}
+
+function getTodayName() {
+  const d = new Date().getDay();
+  const names = {1:'Pazartesi',2:'Salı',3:'Çarşamba',4:'Perşembe',5:'Cuma',6:'Cumartesi',0:'Pazar'};
+  return names[d] || '—';
+}
+
+function countShifts(emp) {
+  return DAYS.filter(d => emp[d] !== null).length;
+}
+
+function totalHours(emp) {
+  let h = 0;
+  DAYS.forEach(d => {
+    if (emp[d]) {
+      const [s,e] = emp[d][0].split('-').map(Number);
+      h += e > s ? e-s : (24-s)+e;
+    }
+  });
+  return h;
+}
+
+// =====================================================================
+// LOGIN
+// =====================================================================
+function switchLoginTab(tab, btn) {
+  document.querySelectorAll('.login-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('login-calisan').style.display = tab==='calisan' ? '' : 'none';
+  document.getElementById('login-yonetici').style.display = tab==='yonetici' ? '' : 'none';
+}
+
+function loginEmployee() {
+  const sel = document.getElementById('emp-select');
+  const name = sel.value;
+  if (!name) {
+    showError('emp-error', 'Lütfen bir çalışan seçin.');
+    return;
+  }
+  currentUser = name;
+  currentRole = 'employee';
+  enterApp();
+}
+
+function loginManager() {
+  const u = document.getElementById('mgr-user').value;
+  const p = document.getElementById('mgr-pass').value;
+  if (u !== 'admin' || p !== 'admin1234') {
+    showError('mgr-error', 'Hatalı kullanıcı adı veya şifre.');
+    return;
+  }
+  currentUser = 'Yönetici';
+  currentRole = 'manager';
+  enterApp();
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = '❌ ' + msg;
+  el.style.display = 'block';
+  setTimeout(()=>el.style.display='none', 3000);
+}
+
+function enterApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  // Set user info
+  document.getElementById('sidebar-name').textContent = currentUser;
+  document.getElementById('sidebar-role').textContent = currentRole === 'manager' ? '🛡️ Yönetici' : '👤 Çalışan';
+
+  const av = document.getElementById('sidebar-avatar');
+  if (currentRole === 'manager') {
+    av.textContent = '🛡️';
+    av.style.background = 'linear-gradient(135deg,#ef4444,#f97316)';
+  } else {
+    const emp = EMPLOYEES.find(e=>e.isim===currentUser);
+    if (emp) {
+      av.textContent = getInitials(emp.isim);
+      av.style.background = getAvatarColor(emp.no);
+    }
+  }
+
+  // Show correct nav
+  if (currentRole === 'manager') {
+    document.getElementById('nav-manager').style.display = '';
+    document.getElementById('nav-employee').style.display = 'none';
+    initManagerApp();
+    showPage('dashboard');
+  } else {
+    document.getElementById('nav-employee').style.display = '';
+    document.getElementById('nav-manager').style.display = 'none';
+    initEmployeeApp();
+    showPage('my-schedule');
+  }
+
+  // Topbar date
+  const now = new Date();
+  document.getElementById('topbar-date').textContent =
+    now.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+function logout() {
+  currentUser = null; currentRole = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+}
+
+// =====================================================================
+// NAVIGATION
+// =====================================================================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.getElementById('topbar-title').textContent = pageTitles[id] || 'YurtTime';
+  closeSidebar();
+
+  // Refresh page data
+  if (id==='dashboard') renderDashboard();
+  else if (id==='schedule') renderSchedule();
+  else if (id==='employees') renderEmployees();
+  else if (id==='locations') renderLocations();
+  else if (id==='today') renderToday();
+  else if (id==='my-schedule') renderMySchedule();
+  else if (id==='my-today') renderMyToday();
+  else if (id==='my-colleagues') renderColleagues();
+}
+
+const pageTitles = {
+  'dashboard':'📊 Dashboard',
+  'schedule':'📅 Haftalık Program',
+  'employees':'👥 Çalışanlar',
+  'locations':'📍 Konumlar',
+  'today':'⏰ Bugünkü Vardiyalar',
+  'my-schedule':'📅 Haftalık Programım',
+  'my-today':'🎯 Bugünkü Görevim',
+  'my-colleagues':'👥 Ekibim',
+};
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+// =====================================================================
+// MANAGER: INIT
+// =====================================================================
+function initManagerApp() {
+  renderDashboard();
+}
+
+// =====================================================================
+// MANAGER: DASHBOARD
+// =====================================================================
+function renderDashboard() {
+  const todayKey = getTodayKey();
+  const todayName = getTodayName();
+
+  // Stats
+  let activeCount = 0;
+  let totalShifts = 0;
+  EMPLOYEES.forEach(e => {
+    if (todayKey && e[todayKey]) activeCount++;
+    totalShifts += countShifts(e);
+  });
+
+  document.getElementById('stat-active').textContent = activeCount;
+  document.getElementById('stat-active-bar').style.width = (activeCount/20*100)+'%';
+  document.getElementById('stat-shifts').textContent = totalShifts;
+
+  const lbl = todayKey ? todayName : 'Bugün tatil günü';
+  document.getElementById('today-day-label').textContent = lbl;
+
+  // Today list
+  const container = document.getElementById('dashboard-today-list');
+  if (!todayKey) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏖️</div><div class="empty-state-text">Bugün hafta sonu — tatil günü</div></div>`;
+  } else {
+    const workers = EMPLOYEES.filter(e=>e[todayKey]);
+    container.innerHTML = workers.map(e => {
+      const d = e[todayKey];
+      const dc = dutyClass(d[1]);
+      const color = {'guv':'var(--blue)','kat':'var(--green)','spor':'var(--purple)','gof':'var(--orange)','egit':'var(--red)','nev':'#f472b6','ois':'var(--teal)'}[dc]||'var(--text3)';
+      return `<div class="timeline-item">
+        <div class="timeline-time">${d[0]}</div>
+        <div class="timeline-dot" style="background:${color}"></div>
+        <div class="timeline-name">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="mini-avatar" style="background:${getAvatarColor(e.no)}">${getInitials(e.isim)}</div>
+            ${e.isim}
+          </div>
+        </div>
+        <div class="timeline-task"><span class="pill p-${dc}">${shortDuty(d[1])}</span></div>
+      </div>`;
+    }).join('');
+
+    if (!workers.length) container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">😴</div><div class="empty-state-text">Bugün görevlendirme yok</div></div>`;
+  }
+
+  // Location summary
+  const locSum = document.getElementById('location-summary');
+  locSum.innerHTML = LOCATIONS.map(loc => {
+    const workers = [];
+    EMPLOYEES.forEach(e => {
+      DAYS.forEach(d => {
+        if (e[d] && norm(e[d][1]).includes(norm(loc.key))) {
+          workers.push({name:e.isim, day:DAY_NAMES[d], time:e[d][0]});
+        }
+      });
+    });
+    const todayWorkers = todayKey ? EMPLOYEES.filter(e=>e[todayKey]&&norm(e[todayKey][1]).includes(norm(loc.key))) : [];
+    return `<div class="location-card">
+      <div class="location-icon">${loc.icon}</div>
+      <div class="location-name">${loc.key}</div>
+      <div class="location-count">Bu hafta: <strong>${workers.length}</strong> vardiya${todayWorkers.length?` | Bugün: <strong>${todayWorkers.length}</strong> kişi`:''}</div>
+      ${todayWorkers.length ? `<div class="location-persons">${todayWorkers.slice(0,3).map(w=>`<div class="location-person"><div class="mini-avatar" style="background:${getAvatarColor(w.no)};width:20px;height:20px;font-size:0.55rem">${getInitials(w.isim)}</div>${w.isim}</div>`).join('')}${todayWorkers.length>3?`<div style="font-size:0.72rem;color:var(--text3);">+${todayWorkers.length-3} kişi daha</div>`:''}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// =====================================================================
+// MANAGER: SCHEDULE
+// =====================================================================
+function renderSchedule() {
+  if (schedView==='table') renderScheduleTable();
+  else if (schedView==='card') renderScheduleCards();
+  else if (schedView==='day') renderScheduleDay();
+}
+
+function setScheduleFilter(f, btn) {
+  schedFilter = f;
+  document.querySelectorAll('.filter-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSchedule();
+}
+
+function switchView(v, btn) {
+  schedView = v;
+  document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['view-table','view-card','view-day'].forEach(id=>{
+    document.getElementById(id).style.display = id==='view-'+v ? '' : 'none';
+  });
+  renderSchedule();
+}
+
+function renderScheduleTable() {
+  const q = norm(document.getElementById('sched-search')?.value||'');
+  const tbody = document.getElementById('sched-tbody');
+  const rows = EMPLOYEES.filter(e => {
+    if (q && !norm(e.isim).includes(q)) return false;
+    if (schedFilter==='tümü') return true;
+    return DAYS.some(d=>e[d]&&matchFilter(e[d][1],schedFilter));
+  });
+  tbody.innerHTML = rows.map(e => {
+    const shifts = countShifts(e);
+    return `<tr>
+      <td style="color:var(--text3)">${e.no}</td>
+      <td><div class="name-cell">
+        <div class="mini-avatar" style="background:${getAvatarColor(e.no)}">${getInitials(e.isim)}</div>
+        <span style="font-weight:500">${e.isim}</span>
+      </div></td>
+      ${DAYS.map(d=>cellTd(e[d])).join('')}
+      <td><span style="font-weight:700;color:var(--accent2)">${shifts}</span> <span style="font-size:0.7rem;color:var(--text3)">gün</span></td>
+    </tr>`;
+  }).join('');
+  if (!rows.length) tbody.innerHTML = `<tr><td colspan="8" class="empty-state"><div class="empty-state-icon">🔍</div><div>Sonuç bulunamadı</div></td></tr>`;
+}
+
+function cellTd(d) {
+  if (!d) return `<td><span class="p-empty">—</span></td>`;
+  const show = schedFilter==='tümü' || matchFilter(d[1],schedFilter);
+  if (!show) return `<td><span class="p-empty">·</span></td>`;
+  return `<td><div class="duty-cell"><div class="duty-time">${d[0]}</div><span class="pill p-${dutyClass(d[1])}">${shortDuty(d[1])}</span></div></td>`;
+}
+
+function renderScheduleCards() {
+  const q = norm(document.getElementById('sched-search')?.value||'');
+  const grid = document.getElementById('emp-card-grid');
+  const emps = EMPLOYEES.filter(e => {
+    if (q && !norm(e.isim).includes(q)) return false;
+    if (schedFilter==='tümü') return true;
+    return DAYS.some(d=>e[d]&&matchFilter(e[d][1],schedFilter));
+  });
+  grid.innerHTML = emps.map(e=>empCardHTML(e)).join('');
+}
+
+function empCardHTML(e, clickable=false) {
+  const shifts = countShifts(e);
+  const hours = totalHours(e);
+  const dayDots = DAYS.map(d=>{
+    const duty = e[d];
+    const dc = duty ? dutyClass(duty[1]) : 'off';
+    const lbl = {paz:'Pzt',sal:'Sal',car:'Çar',per:'Per',cum:'Cum'}[d];
+    const short = duty ? duty[1].split(' ')[0].substring(0,3) : '–';
+    return `<div class="emp-day">
+      <div class="emp-day-label">${lbl}</div>
+      <div class="emp-day-dot ${dc}" title="${duty?duty[1]:'İzin'}">${short}</div>
+    </div>`;
+  }).join('');
+  return `<div class="emp-card">
+    <div class="emp-card-header">
+      <div class="emp-avatar" style="background:${getAvatarColor(e.no)}">${getInitials(e.isim)}</div>
+      <div><div class="emp-name">${e.isim}</div><div class="emp-no">#${e.no}</div></div>
+    </div>
+    <div class="emp-week">${dayDots}</div>
+    <div class="emp-stats">
+      <div class="emp-stat"><div class="emp-stat-val" style="color:var(--accent2)">${shifts}</div><div class="emp-stat-lbl">Vardiya</div></div>
+      <div class="emp-stat"><div class="emp-stat-val" style="color:var(--green)">${hours}s</div><div class="emp-stat-lbl">Toplam</div></div>
+    </div>
+  </div>`;
+}
+
+function renderScheduleDay() {
+  const container = document.getElementById('day-grid-container');
+  container.innerHTML = DAYS.map(dd=>{
+    const workers = EMPLOYEES.filter(e=>e[dd] && (schedFilter==='tümü'||matchFilter(e[dd][1],schedFilter)));
+    return `<div class="day-card">
+      <div class="day-card-header">
+        <div><div class="day-name">${DAY_NAMES[dd]}</div></div>
+        <div class="day-count">${workers.length} kişi</div>
+      </div>
+      <div class="day-duties">
+        ${workers.length ? workers.map(e=>`<div class="duty-row">
+          <div style="display:flex;align-items:center;gap:6px;flex:1">
+            <div class="mini-avatar" style="background:${getAvatarColor(e.no)};width:22px;height:22px;font-size:0.57rem">${getInitials(e.isim)}</div>
+            <div class="duty-row-name">${e.isim}</div>
+          </div>
+          <div class="duty-row-info">
+            <span class="duty-row-time">${e[dd][0]}</span>
+            <span class="pill p-${dutyClass(e[dd][1])}">${shortDuty(e[dd][1])}</span>
+          </div>
+        </div>`).join('') : `<div class="p-empty" style="text-align:center;padding:1rem;">Görev yok</div>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// =====================================================================
+// MANAGER: EMPLOYEES
+// =====================================================================
+function renderEmployees() {
+  const q = norm(document.getElementById('emp-search')?.value||'');
+  const grid = document.getElementById('emp-list-grid');
+  const emps = EMPLOYEES.filter(e=> !q || norm(e.isim).includes(q));
+  grid.innerHTML = emps.map(e=>empCardHTML(e,true)).join('');
+}
+
+// =====================================================================
+// MANAGER: LOCATIONS
+// =====================================================================
+function renderLocations() {
+  const el = document.getElementById('locations-full');
+  el.innerHTML = LOCATIONS.map(loc=>{
+    const allWorkers = [];
+    DAYS.forEach(d=>{
+      EMPLOYEES.forEach(e=>{
+        if (e[d] && norm(e[d][1]).includes(norm(loc.key))) {
+          allWorkers.push({emp:e, day:d, time:e[d][0]});
+        }
+      });
+    });
+
+    const byDay = {};
+    DAYS.forEach(d=>byDay[d]=[]);
+    allWorkers.forEach(w=>byDay[w.day].push(w));
+
+    return `<div class="location-card" style="grid-column:span 1">
+      <div class="location-icon">${loc.icon}</div>
+      <div class="location-name">${loc.key}</div>
+      <div class="location-count">Toplam <strong>${allWorkers.length}</strong> vardiya bu hafta</div>
+      <div style="margin-top:0.75rem;display:flex;flex-direction:column;gap:6px;">
+        ${DAYS.map(d=>{
+          const ws = byDay[d];
+          if (!ws.length) return '';
+          return `<div>
+            <div style="font-size:0.7rem;color:var(--text3);font-weight:600;margin-bottom:3px;">${DAY_NAMES[d]}</div>
+            ${ws.map(w=>`<div class="location-person" style="margin-bottom:3px;">
+              <div class="mini-avatar" style="background:${getAvatarColor(w.emp.no)};width:20px;height:20px;font-size:0.55rem">${getInitials(w.emp.isim)}</div>
+              <span>${w.emp.isim}</span>
+              <span style="margin-left:auto;color:var(--text3);font-size:0.68rem">${w.time}</span>
+            </div>`).join('')}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// =====================================================================
+// MANAGER: TODAY FULL
+// =====================================================================
+function renderToday() {
+  const todayKey = getTodayKey();
+  const lbl = getTodayName() + (todayKey ? '' : ' — Tatil Günü');
+  document.getElementById('today-full-label').textContent = lbl;
+  const el = document.getElementById('today-full-list');
+
+  if (!todayKey) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏖️</div><div class="empty-state-text">Bugün tatil — çalışma yok</div></div>`;
+    return;
+  }
+
+  const workers = EMPLOYEES.filter(e=>e[todayKey]);
+  const byDuty = {};
+  LOCATIONS.forEach(l=>byDuty[l.key]=[]);
+  workers.forEach(e=>{
+    const d = e[todayKey];
+    const key = LOCATIONS.find(l=>norm(d[1]).includes(norm(l.key)))?.key;
+    if (key) byDuty[key].push({emp:e, time:d[0]});
+  });
+
+  el.innerHTML = LOCATIONS.map(loc=>{
+    const ws = byDuty[loc.key];
+    if (!ws.length) return '';
+    return `<div style="margin-bottom:1.25rem;">
+      <div class="section-header" style="margin-bottom:0.5rem;">
+        <div class="section-title">${loc.icon} ${loc.key} <span style="font-size:0.8rem;font-weight:400;color:var(--text2)">${ws.length} kişi</span></div>
+      </div>
+      <div class="timeline">
+        ${ws.map(w=>`<div class="timeline-item">
+          <div class="timeline-time">${w.time}</div>
+          <div class="timeline-dot" style="background:var(${loc.color})"></div>
+          <div class="timeline-name">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="mini-avatar" style="background:${getAvatarColor(w.emp.no)}">${getInitials(w.emp.isim)}</div>
+              ${w.emp.isim}
+            </div>
+          </div>
+          <div class="timeline-task"><span class="pill p-${dutyClass(loc.key)}">#${w.emp.no}</span></div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// =====================================================================
+// EMPLOYEE: INIT
+// =====================================================================
+function initEmployeeApp() {
+  renderMySchedule();
+}
+
+// =====================================================================
+// EMPLOYEE: MY SCHEDULE
+// =====================================================================
+function renderMySchedule() {
+  const emp = EMPLOYEES.find(e=>e.isim===currentUser);
+  if (!emp) return;
+
+  document.getElementById('my-name-label').textContent = emp.isim + ' — Nisan 2026';
+  const todayKey = getTodayKey();
+
+  const grid = document.getElementById('my-schedule-grid');
+  grid.innerHTML = DAYS.map(d=>{
+    const duty = emp[d];
+    const isToday = d===todayKey;
+    const hasD = !!duty;
+    const cls = isToday?'today':hasD?'has-duty':'off';
+    const dc = duty?dutyClass(duty[1]):'';
+    return `<div class="my-day-card ${cls}">
+      <div class="my-day-name">${DAY_NAMES[d]}</div>
+      ${duty ? `
+        <div class="my-day-time">${duty[0]}</div>
+        <span class="pill p-${dc}">${duty[1]}</span>
+        ${isToday?'<div style="margin-top:6px;"><span class="badge-live">Bugün</span></div>':''}
+      ` : `<div class="p-empty" style="margin-top:0.5rem;">İzin günü 🌙</div>`}
+    </div>`;
+  }).join('');
+
+  // Stats
+  const shifts = countShifts(emp);
+  const hours = totalHours(emp);
+  const duties = [...new Set(DAYS.filter(d=>emp[d]).map(d=>emp[d][1]))];
+
+  const statsEl = document.getElementById('my-stats');
+  statsEl.innerHTML = `
+    <div class="stat-card c-purple">
+      <div class="stat-icon">📅</div>
+      <div class="stat-value">${shifts}</div>
+      <div class="stat-label">Bu Hafta Vardiya</div>
+    </div>
+    <div class="stat-card c-green">
+      <div class="stat-icon">⏱️</div>
+      <div class="stat-value">${hours}</div>
+      <div class="stat-label">Toplam Saat</div>
+    </div>
+    <div class="stat-card c-blue">
+      <div class="stat-icon">📍</div>
+      <div class="stat-value">${duties.length}</div>
+      <div class="stat-label">Farklı Görev</div>
+    </div>
+  `;
+}
+
+// =====================================================================
+// EMPLOYEE: MY TODAY
+// =====================================================================
+function renderMyToday() {
+  const emp = EMPLOYEES.find(e=>e.isim===currentUser);
+  const todayKey = getTodayKey();
+  const todayName = getTodayName();
+  document.getElementById('my-today-label').textContent = todayName;
+  const el = document.getElementById('my-today-content');
+
+  if (!todayKey) {
+    el.innerHTML = `<div class="empty-state" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);"><div class="empty-state-icon">🏖️</div><div class="empty-state-text">Bugün tatil günü — iyi dinlenmeler!</div></div>`;
+    return;
+  }
+
+  if (!emp || !emp[todayKey]) {
+    el.innerHTML = `<div class="empty-state" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);"><div class="empty-state-icon">🌙</div><div class="empty-state-text">Bugün izin gününüz — iyi dinlenmeler!</div></div>`;
+    return;
+  }
+
+  const d = emp[todayKey];
+  const dc = dutyClass(d[1]);
+  const colleagues = EMPLOYEES.filter(e=>e.isim!==emp.isim && e[todayKey] && norm(e[todayKey][1]).includes(norm(d[1].split(' ')[0])));
+
+  el.innerHTML = `
+    <div class="card" style="margin-bottom:1rem;border-color:rgba(108,99,255,0.3)">
+      <div class="card-header">
+        <div class="stat-icon" style="font-size:2rem">${LOCATIONS.find(l=>norm(d[1]).includes(norm(l.key)))?.icon||'📋'}</div>
+        <div style="flex:1">
+          <div style="font-size:1.2rem;font-weight:700">${d[1]}</div>
+          <div style="color:var(--text2);margin-top:2px;">${todayName} | ${d[0]}</div>
+        </div>
+        <span class="badge-live">Aktif</span>
+      </div>
+    </div>
+
+    ${colleagues.length ? `
+      <div style="margin-top:1rem;">
+        <div class="section-title" style="margin-bottom:0.75rem;">👥 Aynı Görevdeki Ekip</div>
+        <div class="timeline">
+          ${colleagues.map(c=>`<div class="timeline-item">
+            <div class="timeline-dot" style="background:var(--accent)"></div>
+            <div style="display:flex;align-items:center;gap:8px;flex:1">
+              <div class="mini-avatar" style="background:${getAvatarColor(c.no)}">${getInitials(c.isim)}</div>
+              <div class="timeline-name">${c.isim}</div>
+            </div>
+            <div>${c[todayKey][0]}</div>
+          </div>`).join('')}
+        </div>
+      </div>` : ''}
+  `;
+}
+
+// =====================================================================
+// EMPLOYEE: COLLEAGUES
+// =====================================================================
+function renderColleagues() {
+  const emp = EMPLOYEES.find(e=>e.isim===currentUser);
+  const grid = document.getElementById('colleagues-grid');
+  if (!emp) return;
+
+  const colSet = new Set();
+  DAYS.forEach(d=>{
+    if (!emp[d]) return;
+    EMPLOYEES.forEach(c=>{
+      if (c.isim!==emp.isim && c[d]) colSet.add(c.isim);
+    });
+  });
+
+  const cols = EMPLOYEES.filter(e=>colSet.has(e.isim));
+  if (!cols.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🤷</div><div>Bu hafta ortak vardiya yok</div></div>`;
+    return;
+  }
+  grid.innerHTML = cols.map(e=>empCardHTML(e)).join('');
+}
+
+// =====================================================================
+// INIT
+// =====================================================================
+window.addEventListener('DOMContentLoaded', ()=>{
+  // Allow enter key on login
+  document.getElementById('emp-pass').addEventListener('keydown',e=>{if(e.key==='Enter')loginEmployee();});
+  document.getElementById('mgr-pass').addEventListener('keydown',e=>{if(e.key==='Enter')loginManager();});
+});
+</script>
+
+</body>
+</html>
